@@ -3,7 +3,9 @@ package com.mason.demo.task;
 import com.alibaba.ttl.threadpool.TtlExecutors;
 import com.mason.demo.log.TraceChain;
 import com.mason.demo.log.TraceHolder;
+import com.mason.demo.server.MyThreadPoolExecutor2;
 import com.mason.demo.server.ThreadPoolUtil2;
+import com.mason.demo.util.ApplicationContextUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,5 +66,8 @@ public class BusTask implements Runnable {
             LOGGER.info("BusTask parentThread trace = {},CompletableFuture wrapper thread pool trace = {}, message = {}", traceChain.getTraceId(), TraceHolder.get().getTraceId(), message + PrintUtil.print(traceChain.getTraceId(), TraceHolder.get().getTraceId()));
         }, TtlExecutors.getTtlExecutor(ThreadPoolUtil2.getThreadPoolExecutor()));
 
+        CompletableFuture.runAsync(() -> {
+            LOGGER.info("BusTask parentThread trace = {},CompletableFuture spring context thread trace = {}, message = {}", traceChain.getTraceId(), TraceHolder.get().getTraceId(), message + PrintUtil.print(traceChain.getTraceId(), TraceHolder.get().getTraceId()));
+        }, ApplicationContextUtil.getBean(MyThreadPoolExecutor2.class));
     }
 }
